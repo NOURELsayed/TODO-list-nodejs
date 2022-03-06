@@ -1,51 +1,47 @@
-const express = require('express');
-const mongoose=require('mongoose');
-const dotenv = require('dotenv')
-const passport = require('passport')
-const session = require('express-session')
-const MongoStore = require('connect-mongo')(session)
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const passport = require("passport");
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
+const appRoutes = require("./routes/index");
+const authRoutes = require("./routes/auth");
+const todoRoutes = require("./routes/todo");
 
+const app = express();
+const PORT = process.env.PORT || 5000;
+dotenv.config({ path: "./config/config.env" });
 
-var app=express();
-const PORT = process.env.PORT||5000;
-dotenv.config({ path: './config/config.env' })
-
-mongoose.connect(process.env.MONGO_URI,{
-    useNewUrlParser:true,
-    useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Passport config
-require('./config/passport')(passport)
-
-
+require("./config/passport")(passport);
 
 // Middleware
-app.use(express.urlencoded({extended:true}))
-app.use(express.static('public'))
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-app.set('view engine','ejs');
+app.set("view engine", "ejs");
 
 app.use(
-    session({
-      secret: 'keyboard cat',
-      resave: false,
-      saveUninitialized: false,
-      store: new MongoStore({ mongooseConnection: mongoose.connection }),
-    })
-  )
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  })
+);
 
-  // Passport middleware
-app.use(passport.initialize())
-app.use(passport.session())
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
+app.use(appRoutes);
+app.use("/auth", authRoutes);
 
-app.use(require("./routes/index"))
-app.use('/auth', require('./routes/auth'))
+app.use(todoRoutes);
 
-app.use(require("./routes/todo"))
-
-
-
-
-app.listen(PORT,console.log(`listening at ${PORT}`))
+app.listen(PORT, console.log(`listening at ${PORT}`));
