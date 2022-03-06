@@ -7,7 +7,7 @@ const MongoStore = require('connect-mongo')(session)
 
 
 var app=express();
-const PORT = process.env.PORT||3000;
+const PORT = process.env.PORT||5000;
 dotenv.config({ path: './config/config.env' })
 
 mongoose.connect(process.env.MONGO_URI,{
@@ -43,6 +43,7 @@ app.use(passport.session())
 app.use(require("./routes/index"))
 app.use('/auth', require('./routes/auth'))
 
+app.use(require("./routes/todo"))
 
 
 
