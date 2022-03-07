@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Todo_model = require("../models/todo");
 const todosCtrl = require("../controllers/todos");
-const {ADD_TODO, DELETE_TODO} = require('../constants/routes/path');
+const { ADD_TODO, DELETE_TODO } = require("../constants/routes/path");
 
 router
   .post(ADD_TODO, todosCtrl.addTodo)
